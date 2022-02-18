@@ -2,14 +2,14 @@
  * @Author: wangtao
  * @Date: 2022-02-17 17:37:09
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-02-18 00:21:21
+ * @LastEditTime: 2022-02-18 16:49:11
  * @Description: file content
  */
 
 const ora = require("ora");
 const axios = require("axios");
 // const path = require('path');
-const { downloadDirectory } = require("./constants");
+const { downloadDirectory, templateName } = require("./constants");
 const { promisify } = require("util");
 let downloadGit = require("download-git-repo");
 downloadGit = promisify(downloadGit);
@@ -25,6 +25,8 @@ const path = require("path");
 const fs = require("fs");
 const fse = require("fs-extra");
 const inquirer = require("inquirer");
+
+let newProjectName = "";
 
 // 根据我们想要实现的功能配置执行动作，遍历产生对应的命令
 const mapActions = {
@@ -83,71 +85,109 @@ const getTagLists = async (repo) => {
 };
 
 const downDir = async (repo, tag) => {
-  console.log(tag, "downDir方法");
   let project = `WTxiaomage/${repo}`; //下载的项目
   if (tag) {
     project += `#${tag}`;
   }
   let dest = `${downloadDirectory}/${repo}`;
-  //把项目下载当对应的目录中
-  console.log(dest, "dest的内容。。。。。。。。。。");
-  console.log(project, "dest的内容。。。。。。。。。。");
   try {
     await downloadGit(project, dest);
   } catch (error) {
-    console.log("错误了吗？？？\n");
     console.log(error);
   }
   return dest;
 };
 
 // 复制项目从临时文件到本地工作项目
-const copyTempToLoclhost = async (target, projectName) => {
-  const resolvePath = path.join(path.resolve(), projectName);
-  // 此处模拟如果仓库中有ask.js就表示是复杂的仓库项目
-  if (!fs.existsSync(path.join(target, "ask.js"))) {
-    await ncp(target, resolvePath);
-    // fse.remove(target);
-  } else {
-    //复杂项目
-    // 1) 让用户填信息
-    await new Promise((resolve, reject) => {
-      MetalSmith(__dirname)
-        .source(target) // 遍历下载的目录
-        .destination(resolvePath) // 最终编译好的文件存放位置
-        .use(async (files, metal, done) => {
-          let args = require(path.join(target, "ask.js"));
-          let res = await inquirer.prompt(args);
-          let met = metal.metadata();
-          // 将询问的结果放到metadata中保证在下一个中间件中可以获取到
-          Object.assign(met, res);
-          //  ask.js 只是用于 判断是否是复杂项目 且 内容可以定制复制到本地不需要
-          delete files["ask.js"];
-          done();
-        })
-        .use((files, metal, done) => {
-          const res = metal.metadata();
-          Reflect.ownKeys(files).forEach(async (file) => {
-            if (file.includes(".js") || file.includes(".json")) {
-              let content = files[file].contents.toString(); //文件内容
-              if (content.includes("<%")) {
-                content = await render(content, res);
-                files[file].contents = Buffer.from(content); //渲染
-              }
-            }
-          });
-          done();
-        })
-        .build((err) => {
-          if (err) {
-            reject();
-          } else {
-            resolve();
-          }
-        });
-    });
-  }
+const copyTempToLoclhost = async (srcPath, projectName) => {
+  let destPath = path.resolve(projectName);
+  newProjectName = projectName;
+
+  run(srcPath, destPath);
 };
+
+// 复制项目
+const run = (srcPath, destPath) => {
+  copyFiles(srcPath, destPath);
+  fs.readdir(srcPath, (err, files) => {
+    if (err) {
+      console.warn(err);
+    } else {
+      files.forEach((relativeFilePath) => {
+        let absoluteSrcPath = path.join(srcPath, relativeFilePath);
+        let absoluteDestPath = path.join(destPath, relativeFilePath);
+
+        // 复制文件及文件夹
+        copyFiles(absoluteSrcPath, absoluteDestPath);
+        // 如果是文件夹需要递归
+        if (fs.lstatSync(absoluteSrcPath).isDirectory()) {
+          run(absoluteSrcPath, absoluteDestPath);
+        }
+      });
+    }
+  });
+};
+
+// 复制文件
+function copyFiles(srcPath, destPath) {
+  // 是否需要改名
+  const isRename = destPath.indexOf(templateName) !== -1;
+  if (isRename) {
+    destPath = destPath.replace(templateName, newProjectName);
+  }
+
+  if (fs.lstatSync(srcPath).isDirectory()) {
+    if (!fs.existsSync(destPath)) {
+      fs.mkdirSync(destPath);
+    } // Not recursive
+    return;
+  }
+
+  copyFile(srcPath, destPath);
+}
+
+function copyFile(srcPath, destPath) {
+  fs.readFile(srcPath, "utf8", function (err, data) {
+    if (err) {
+      return console.log(err);
+    }
+    var result = data.replace(/react_native_basic_framework/g, templateName);
+
+    fs.writeFile(destPath, result, "utf8", function (err) {
+      if (err) return console.log(err);
+    });
+  });
+}
+
+function copyBinaryFile(srcPath, destPath, cb) {
+  let cbCalled = false;
+
+  const { mode } = fs.statSync(srcPath);
+
+  const readStream = fs.createReadStream(srcPath);
+
+  const writeStream = fs.createWriteStream(destPath);
+
+  readStream.on("error", (err) => {
+    done(err);
+  });
+  writeStream.on("error", (err) => {
+    done(err);
+  });
+  readStream.on("close", () => {
+    done();
+
+    fs.chmodSync(destPath, mode);
+  });
+  readStream.pipe(writeStream);
+
+  function done(err) {
+    if (!cbCalled) {
+      cb(err);
+      cbCalled = true;
+    }
+  }
+}
 
 module.exports = {
   mapActions,
