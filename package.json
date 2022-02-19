@@ -1,7 +1,7 @@
 {
   "name": "xm-rn-cli",
-  "version": "1.0.2",
-  "description": "",
+  "version": "1.0.3",
+  "description": "快速搭建react-tive业务开发框架",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "rn": "./bin/www.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "wangtao",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.9.0",
