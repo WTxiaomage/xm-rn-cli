@@ -2,11 +2,12 @@
  * @Author: wangtao
  * @Date: 2022-02-17 17:36:48
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-02-18 16:52:37
+ * @LastEditTime: 2022-02-19 15:08:25
  * @Description: file content
  */
 
 const inquirer = require("inquirer");
+const chalk = require("chalk");
 const {
   fnLoadingByOra,
   fetchReopLists,
@@ -40,8 +41,8 @@ module.exports = async (projectName) => {
       choices: tags,
     },
   ]);
-  console.log(`我现在选择了哪个仓库？ ${repo}`);
-  console.log(`仓库 ${repo}的版本信息列表：${tag}`);
+  console.log(chalk.green(`您选择了仓库${repo}的${tag}版本`));
+  console.log(chalk.yellow(`仓库模板放在GitHub上面，建议科学上网`));
   const target = await fnLoadingByOra(downDir, "下载项目中...")(repo, tag);
   await copyTempToLoclhost(target, projectName);
 };
