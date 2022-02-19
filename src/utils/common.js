@@ -2,14 +2,18 @@
  * @Author: wangtao
  * @Date: 2022-02-17 17:37:09
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-02-19 19:27:07
+ * @LastEditTime: 2022-02-19 19:30:57
  * @Description: file content
  */
 
 const ora = require("ora");
 const axios = require("axios");
 // const path = require('path');
-const { downloadDirectory, templateName } = require("./constants");
+const {
+  downloadDirectory,
+  templateName,
+  binaryExtensions,
+} = require("./constants");
 const { promisify } = require("util");
 let downloadGit = require("download-git-repo");
 downloadGit = promisify(downloadGit);
@@ -150,13 +154,16 @@ function copyFiles(srcPath, destPath) {
 }
 
 function copyFile(srcPath, destPath) {
-  fs.readFile(srcPath, "utf8", function (err, data) {
+  // 二进制格式不能用utf8
+  let format =
+    binaryExtensions.indexOf(path.extname(srcPath)) !== -1 ? "binary" : "utf8";
+  fs.readFile(srcPath, format, function (err, data) {
     if (err) {
       return console.log(err);
     }
     var result = data.replace(/react_native_basic_framework/g, newProjectName);
 
-    fs.writeFile(destPath, result, "utf8", function (err) {
+    fs.writeFile(destPath, result, format, function (err) {
       if (err) return console.log(err);
     });
   });

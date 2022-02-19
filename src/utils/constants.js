@@ -13,9 +13,12 @@ const downloadDirectory = `${
 
 const templateName = "react_native_basic_framework";
 
+const binaryExtensions = [".png", ".jar", ".keystore"];
+
 module.exports = {
   name,
   version,
   downloadDirectory,
   templateName,
+  binaryExtensions,
 };
