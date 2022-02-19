@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-02-17 17:37:09
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-02-18 16:49:11
+ * @LastEditTime: 2022-02-19 19:27:07
  * @Description: file content
  */
 
@@ -133,7 +133,10 @@ function copyFiles(srcPath, destPath) {
   // 是否需要改名
   const isRename = destPath.indexOf(templateName) !== -1;
   if (isRename) {
-    destPath = destPath.replace(templateName, newProjectName);
+    destPath = destPath.replace(
+      /react_native_basic_framework/g,
+      newProjectName
+    );
   }
 
   if (fs.lstatSync(srcPath).isDirectory()) {
@@ -151,7 +154,7 @@ function copyFile(srcPath, destPath) {
     if (err) {
       return console.log(err);
     }
-    var result = data.replace(/react_native_basic_framework/g, templateName);
+    var result = data.replace(/react_native_basic_framework/g, newProjectName);
 
     fs.writeFile(destPath, result, "utf8", function (err) {
       if (err) return console.log(err);
