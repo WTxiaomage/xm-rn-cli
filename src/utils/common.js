@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-02-17 17:37:09
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-02-19 19:30:57
+ * @LastEditTime: 2022-02-19 19:42:33
  * @Description: file content
  */
 
@@ -19,18 +19,13 @@ let downloadGit = require("download-git-repo");
 downloadGit = promisify(downloadGit);
 // const chalk = require("chalk");
 
-const MetalSmith = require("metalsmith"); // 遍历文件夹 找需不需要渲染
-// consolidate是一个模板引擎的结合体。包括了常用的jade和ejs。
-let { render } = require("consolidate").ejs;
-render = promisify(render); // 包装渲染方法
-let ncp = require("ncp");
-ncp = promisify(ncp);
 const path = require("path");
 const fs = require("fs");
-const fse = require("fs-extra");
-const inquirer = require("inquirer");
 
+// 新项目名称
 let newProjectName = "";
+// 匹配模板名称
+const regx = new RegExp(templateName, "g");
 
 // 根据我们想要实现的功能配置执行动作，遍历产生对应的命令
 const mapActions = {
@@ -137,10 +132,7 @@ function copyFiles(srcPath, destPath) {
   // 是否需要改名
   const isRename = destPath.indexOf(templateName) !== -1;
   if (isRename) {
-    destPath = destPath.replace(
-      /react_native_basic_framework/g,
-      newProjectName
-    );
+    destPath = destPath.replace(regx, newProjectName);
   }
 
   if (fs.lstatSync(srcPath).isDirectory()) {
@@ -161,7 +153,7 @@ function copyFile(srcPath, destPath) {
     if (err) {
       return console.log(err);
     }
-    var result = data.replace(/react_native_basic_framework/g, newProjectName);
+    var result = data.replace(regx, newProjectName);
 
     fs.writeFile(destPath, result, format, function (err) {
       if (err) return console.log(err);
