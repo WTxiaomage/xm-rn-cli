@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-02-19 13:48:34
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-16 17:18:26
+ * @LastEditTime: 2022-03-16 17:19:44
  * @Description: file content
 -->
 
@@ -14,7 +14,7 @@
 使用命令
 
 ```
-yarn add xm-rn-cli -g
+yarn add @jswangtao/react-native-cli -g
 rn create myProject
 ```
 
