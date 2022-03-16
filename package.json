@@ -1,6 +1,6 @@
 {
-  "name": "xm-rn-cli",
-  "version": "1.0.3",
+  "name": "@jswangtao/react-native-cli",
+  "version": "1.0.4",
   "description": "快速搭建react-tive业务开发框架",
   "main": "index.js",
   "scripts": {
