@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-02-17 17:37:09
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-02-19 19:42:33
+ * @LastEditTime: 2022-04-07 21:32:55
  * @Description: file content
  */
 
@@ -69,7 +69,7 @@ const fnLoadingByOra =
 const fetchReopLists = async () => {
   // 获取当前组织中的所有仓库信息,这个仓库中存放的都是项目模板
   const { data } = await axios.get(
-    "https://api.github.com/users/WTxiaomage/repos"
+    "https://api.github.com/users/jswangtao/repos"
   );
   return data.filter((item) => {
     return item.name === "react-native-basic-framework";
@@ -78,13 +78,13 @@ const fetchReopLists = async () => {
 
 const getTagLists = async (repo) => {
   const { data } = await axios.get(
-    `https://api.github.com/repos/WTxiaomage/${repo}/tags`
+    `https://api.github.com/repos/jswangtao/${repo}/tags`
   );
   return data;
 };
 
 const downDir = async (repo, tag) => {
-  let project = `WTxiaomage/${repo}`; //下载的项目
+  let project = `jswangtao/${repo}`; //下载的项目
   if (tag) {
     project += `#${tag}`;
   }
