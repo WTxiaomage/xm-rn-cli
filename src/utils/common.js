@@ -76,6 +76,7 @@ const fetchReopLists = async () => {
   });
 };
 
+// 获取仓库tag
 const getTagLists = async (repo) => {
   const { data } = await axios.get(
     `https://api.github.com/repos/jswangtao/${repo}/tags`
