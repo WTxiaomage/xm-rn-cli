@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-02-17 17:37:09
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-04-07 21:32:55
+ * @LastEditTime: 2022-04-12 10:00:27
  * @Description: file content
  */
 
@@ -72,7 +72,7 @@ const fetchReopLists = async () => {
     "https://api.github.com/users/jswangtao/repos"
   );
   return data.filter((item) => {
-    return item.name === "react-native-basic-framework";
+    return item.name === "react-native-app-pro";
   });
 };
 
