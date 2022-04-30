@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-02-17 17:37:09
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-04-12 10:00:27
+ * @LastEditTime: 2022-04-30 22:22:14
  * @Description: file content
  */
 
@@ -89,8 +89,10 @@ const downDir = async (repo, tag) => {
   if (tag) {
     project += `#${tag}`;
   }
-  let dest = `${downloadDirectory}/${repo}`;
+  let dest = `${downloadDirectory}/${repo}/${tag}`;
   try {
+    // 先删除缓存
+    delDir(dest);
     await downloadGit(project, dest);
   } catch (error) {
     console.log(error);
@@ -192,6 +194,31 @@ function copyBinaryFile(srcPath, destPath, cb) {
   }
 }
 
+// 删除文件夹
+function delDir(destPath) {
+  // 如果存在
+  if (fs.existsSync(destPath)) {
+    // 读取文件夹中所有文件及文件夹
+    var list = fs.readdirSync(destPath);
+    list.forEach((v, i) => {
+      // 拼接路径
+      var url = destPath + "/" + v;
+      // 读取文件信息
+      var stats = fs.statSync(url);
+      // 判断是文件还是文件夹
+      if (stats.isFile()) {
+        // 当前为文件，则删除文件
+        fs.unlinkSync(url);
+      } else {
+        // 当前为文件夹，则递归调用自身
+        arguments.callee(url);
+      }
+    });
+    // 删除空文件夹
+    fs.rmdirSync(destPath);
+  }
+}
+
 module.exports = {
   mapActions,
   fnLoadingByOra,
@@ -199,4 +226,5 @@ module.exports = {
   getTagLists,
   downDir,
   copyTempToLoclhost,
+  delDir,
 };
