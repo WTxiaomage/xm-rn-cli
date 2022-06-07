@@ -1,6 +1,6 @@
 {
   "name": "@jswangtao/react-native-cli",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "快速搭建react-tive业务开发框架",
   "main": "index.js",
   "scripts": {

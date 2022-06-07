@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-02-17 17:37:09
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-04-30 22:22:14
+ * @LastEditTime: 2022-06-07 14:13:47
  * @Description: file content
  */
 
@@ -80,6 +80,14 @@ const fetchReopLists = async () => {
 const getTagLists = async (repo) => {
   const { data } = await axios.get(
     `https://api.github.com/repos/jswangtao/${repo}/tags`
+  );
+  return data;
+};
+
+// 获取仓库branches
+const getBranchesLists = async (repo) => {
+  const { data } = await axios.get(
+    `https://api.github.com/repos/jswangtao/${repo}/branches`
   );
   return data;
 };
@@ -224,6 +232,7 @@ module.exports = {
   fnLoadingByOra,
   fetchReopLists,
   getTagLists,
+  getBranchesLists,
   downDir,
   copyTempToLoclhost,
   delDir,
